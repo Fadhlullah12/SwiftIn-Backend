@@ -15,7 +15,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
         _set = db.Set<T>();
     }
 
-    public async Task<T?> GetByIdAsync(Guid id) => await _set.FindAsync(id);
+    public async Task<T?> GetByIdAsync(string id) => await _set.FindAsync(id);
 
     public async Task<List<T>> GetAllAsync() => await _set.ToListAsync();
 

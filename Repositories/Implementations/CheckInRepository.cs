@@ -30,4 +30,24 @@ public class CheckInRepository : BaseRepository<CheckIn>, ICheckInRepository
         await _set.Where(c => c.TeacherId == teacherId)
                   .OrderByDescending(c => c.Timestamp)
                   .FirstOrDefaultAsync();
+
+                    public async Task<(List<CheckIn> Items, int TotalCount)> SearchAsync(
+        DateTime? fromUtc, DateTime? toUtc, Guid? teacherId, CheckInStatus? status, int page, int pageSize)
+    {
+        var query = _set.Include(c => c.Teacher).Include(c => c.Camera).AsQueryable();
+ 
+        if (fromUtc.HasValue) query = query.Where(c => c.Timestamp >= fromUtc.Value);
+        if (toUtc.HasValue) query = query.Where(c => c.Timestamp < toUtc.Value);
+        if (teacherId.HasValue) query = query.Where(c => c.TeacherId == teacherId.ToString());
+        if (status.HasValue) query = query.Where(c => c.Status == status.Value);
+ 
+        var total = await query.CountAsync();
+        var items = await query.OrderByDescending(c => c.Timestamp)
+                               .Skip((page - 1) * pageSize)
+                               .Take(pageSize)
+                               .ToListAsync();
+ 
+        return (items, total);
+    }
+ 
 }

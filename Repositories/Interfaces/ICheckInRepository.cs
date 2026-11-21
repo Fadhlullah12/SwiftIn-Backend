@@ -1,4 +1,5 @@
 using SwiftIn.Models.Entities;
+using SwiftIn.Models.Enums;
 
 namespace SwiftIn.Repositories;
 
@@ -15,4 +16,6 @@ public interface ICheckInRepository : IBaseRepository<CheckIn>
 
     // Most recent check-in, used for the "don't record twice within X minutes" rule
     Task<CheckIn?> GetLatestForTeacherAsync(string teacherId);
+     Task<(List<CheckIn> Items, int TotalCount)> SearchAsync(
+        DateTime? fromUtc, DateTime? toUtc, Guid? teacherId, CheckInStatus? status, int page, int pageSize);
 }
